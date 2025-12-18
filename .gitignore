@@ -1,0 +1,10 @@
+/.tmp
+/result
+
+# OS files
+**/.DS_Store
+**/Thumbs.db
+
+# devenv, direnv
+.devenv*
+.direnv
