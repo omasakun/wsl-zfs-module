@@ -1,4 +1,5 @@
 # https://flake.parts/index.html
+# http://openzfs.github.io/openzfs-docs/Developer%20Resources/Building%20ZFS.html
 
 {
   inputs = {
@@ -14,9 +15,31 @@
       perSystem =
         { pkgs, ... }:
         let
-          deps = with pkgs; [
-            bash
-          ];
+          deps =
+            with pkgs;
+            [
+              # Core build tools
+              stdenv # TODO: is this always correct for wsl kernel?
+              autoconf
+              automake
+              libtool
+
+              # ZFS build deps / user-space tools deps
+              attr
+              curl
+              gettext
+              libaio
+              libtirpc
+              libunwind
+              libuuid
+              openssl
+              pam
+              pkg-config
+              python3
+              udev
+              zlib
+            ]
+            ++ pkgs.linux.nativeBuildInputs; # TODO: is this always correct for wsl kernel?
         in
         {
           packages.default = pkgs.stdenv.mkDerivation {

@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>WSL ZFS Module</h1>
+  <h1>WSL NixOS ZFS Module</h1>
   <p>ZFS Kernel Module for WSL2</p>
 </div>
 <br>
@@ -8,3 +8,5 @@
 WSL2 supports custom kernel modules since kernel version 6.
 
 This project provides a ZFS kernel module automatically built with GitHub Actions for easy installation on WSL2.
+
+Originally made for WSL NixOS, but should work on any WSL2 distribution.
