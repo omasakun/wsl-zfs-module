@@ -1,5 +1,4 @@
 # https://flake.parts/index.html
-# http://openzfs.github.io/openzfs-docs/Developer%20Resources/Building%20ZFS.html
 
 {
   inputs = {

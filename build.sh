@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# http://openzfs.github.io/openzfs-docs/Developer%20Resources/Building%20ZFS.html
+# https://www.kernel.org/doc/html/latest/kbuild/modules.html
+
 set -euo pipefail
 
 ROOT_DIR="$(pwd)/.tmp"
@@ -43,18 +46,26 @@ ensure_repo "$KERNEL_REPO" "$KERNEL_TAG" "$ROOT_DIR/kernel"
 
   # Prepare the kernel
   # TODO: we probably only need to run some targets
-  make -j"$(nproc)" -s
+  make -j"$(nproc)" prepare_modules
+  make -j"$(nproc)" modules
 )
 
 # Build ZFS kernel module
 (
   cd "$ROOT_DIR/zfs" || exit
 
+  # Prepare the build system
   sh autogen.sh
   sh configure \
+    --with-config=kernel \
     --with-linux="$ROOT_DIR/kernel" \
     --with-linux-obj="$ROOT_DIR/kernel"
 
-  make -j"$(nproc)" -s
-  cp -r . "$ROOT_DIR/result"  # TODO
+  # Build the kernel module
+  make -j"$(nproc)"
 )
+
+# Collect results
+rm -rf "$ROOT_DIR/result"
+mkdir "$ROOT_DIR/result"
+cp "$ROOT_DIR/zfs/module/zfs.ko" "$ROOT_DIR/result/"
