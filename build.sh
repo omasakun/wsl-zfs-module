@@ -12,7 +12,7 @@ ZFS_TAG="${2:-}"
 if [ -z "$KERNEL_TAG" ]; then
   KERNEL_TAG="$(curl -s https://api.github.com/repos/microsoft/WSL2-Linux-Kernel/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)"
   # Or, use the kernel version of the current environment
-  # KERNEL_TAG="linux-msft-wsl-$(uname -r | cut -d '-' -f1)"
+  KERNEL_TAG="linux-msft-wsl-$(uname -r | cut -d '-' -f1)"
 fi
 
 if [ -z "$ZFS_TAG" ]; then
@@ -55,7 +55,7 @@ ensure_repo "$KERNEL_REPO" "$KERNEL_TAG" "$ROOT_DIR/kernel"
 
   # Prepare the kernel (Module.symvers is needed for ZFS)
   # TODO: we probably only need to run some targets
-  make -j"$(nproc)" modules
+  make -j"$(nproc)"
 )
 
 # Build ZFS kernel module

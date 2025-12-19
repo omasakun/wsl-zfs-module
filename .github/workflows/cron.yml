@@ -39,17 +39,30 @@ jobs:
       - uses: cachix/install-nix-action@v31
       - name: Build and release
         run: |
-          RELEASE_TAG="${{ matrix.zfs-tag }}-${{ matrix.kernel-tag }}"
+          ZFS_TAG="${{ matrix.zfs-tag }}"
+          KERNEL_TAG="${{ matrix.kernel-tag }}"
+
+          ZFS_VERSION=$(echo "$ZFS_TAG" | sed 's/^zfs-//')
+          KERNEL_VERSION=$(echo "$KERNEL_TAG" | sed 's/^linux-msft-wsl-//')
+
+          KERNEL_LINK="https://github.com/microsoft/WSL2-Linux-Kernel/releases/tag/$KERNEL_TAG"
+          ZFS_LINK="https://github.com/openzfs/zfs/releases/tag/$ZFS_TAG"
+
+          RELEASE_TAG="zfs-${ZFS_VERSION}-kernel-${KERNEL_VERSION}"
+
+          RELEASE_NOTE="ZFS kernel module built for WSL2 Linux Kernel"
+          RELEASE_NOTE+="\n\n- Kernel: [$KERNEL_TAG]($KERNEL_LINK)"
+          RELEASE_NOTE+="\n- ZFS: [$ZFS_TAG]($ZFS_LINK)"
 
           if ! gh release view "$RELEASE_TAG" > /dev/null 2>&1; then
             echo "Building ZFS module for $RELEASE_TAG"
-            nix develop --ignore-environment --command bash build.sh "${{ matrix.kernel-tag }}" "${{ matrix.zfs-tag }}"
+            nix develop --ignore-environment --command bash build.sh "$KERNEL_TAG" "$ZFS_TAG"
 
             echo "Creating release: $RELEASE_TAG"
             gh release create "$RELEASE_TAG" \
               ".tmp/result/zfs.ko" \
-              --title "ZFS ${{ matrix.zfs-tag }} - Kernel ${{ matrix.kernel-tag }}" \
-              --generate-notes
+              --title "ZFS $ZFS_VERSION - Kernel $KERNEL_VERSION" \
+              --notes "$(printf "$RELEASE_NOTE")"
           else
             echo "Release $RELEASE_TAG already exists, skipping"
           fi
