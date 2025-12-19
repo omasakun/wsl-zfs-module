@@ -1,6 +1,6 @@
 <div align="center">
-  <h1>WSL NixOS ZFS Module</h1>
-  <p>ZFS Kernel Module for WSL2</p>
+  <h1>WSL2 ZFS Module</h1>
+  <p>ZFS Kernel Module Builds for WSL2</p>
 </div>
 <br>
 <br>
@@ -9,7 +9,7 @@ WSL2 supports custom kernel modules since kernel version 6.
 
 This project provides a ZFS kernel module automatically built with GitHub Actions for easy installation on WSL2.
 
-Originally made for WSL NixOS, but should work on any WSL2 distribution.
+Originally made for [NixOS-WSL](https://github.com/nix-community/NixOS-WSL), but should work on any WSL2 distribution.
 
 ## Installation
 
@@ -19,7 +19,9 @@ Originally made for WSL NixOS, but should work on any WSL2 distribution.
 
 Make sure to download the version that matches your WSL2 kernel version (`uname -r`).
 
-### On NixOS-WSL
+<br>
+
+**On NixOS-WSL**
 
 ```bash
 # Get the current kernel and latest ZFS tags
