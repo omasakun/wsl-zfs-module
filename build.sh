@@ -7,8 +7,8 @@ set -euo pipefail
 
 ROOT_DIR="$(pwd)/.tmp"
 KERNEL_REPO="https://github.com/microsoft/WSL2-Linux-Kernel.git"
-# KERNEL_TAG="linux-msft-wsl-$(uname -r | cut -d '-' -f1)"
 KERNEL_TAG="$(curl -s https://api.github.com/repos/microsoft/WSL2-Linux-Kernel/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)"
+# KERNEL_TAG="linux-msft-wsl-$(uname -r | cut -d '-' -f1)"
 
 ZFS_REPO="https://github.com/openzfs/zfs.git"
 ZFS_TAG="$(curl -s https://api.github.com/repos/openzfs/zfs/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)"
@@ -46,8 +46,12 @@ ensure_repo "$KERNEL_REPO" "$KERNEL_TAG" "$ROOT_DIR/kernel"
 
   # Prepare the kernel
   # TODO: we probably only need to run some targets
-  make -j"$(nproc)" prepare_modules
+  # make -j"$(nproc)" modules_prepare
   make -j"$(nproc)" modules
+
+  # Fake Modules.symvers file to satisfy ZFS build system
+  # TODO: should we actually generate this by `make modules`?
+  touch Module.symvers
 )
 
 # Build ZFS kernel module
