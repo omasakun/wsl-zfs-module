@@ -32,6 +32,8 @@ jobs:
       matrix:
         kernel-tag: ${{ fromJson(needs.get-tags.outputs.kernel-tags) }}
         zfs-tag: ${{ fromJson(needs.get-tags.outputs.zfs-tags) }}
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v5
       - uses: cachix/install-nix-action@v31
