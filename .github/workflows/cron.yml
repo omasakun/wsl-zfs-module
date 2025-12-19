@@ -2,7 +2,7 @@ name: "Build and Release (Cron)"
 
 on:
   schedule:
-    - cron: "37 1 * * *"
+    - cron: "37 1 * * 1"  # At 01:37 every week
   workflow_dispatch:
 
 jobs:
@@ -75,7 +75,7 @@ jobs:
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
-        if: always()  # Run even if the previous step fails
+        if: always() # Run even if the previous step fails
         with:
           name: zfs-modules-${{ matrix.zfs-tag }}-${{ matrix.kernel-tag }}
           path: .tmp/result/
