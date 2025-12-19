@@ -34,3 +34,9 @@ nix shell nixpkgs#kmod nixpkgs#zfs
 sudo insmod zfs.ko
 sudo zfs --version
 ```
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+Copyright 2025 omasakun
