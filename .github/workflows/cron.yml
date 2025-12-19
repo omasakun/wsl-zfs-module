@@ -17,12 +17,12 @@ jobs:
         run: |
           # Fetch latest kernel tags
           KERNEL_TAGS=$(curl -s https://api.github.com/repos/microsoft/WSL2-Linux-Kernel/releases \
-            | jq -r '[.[] | select(.prerelease == false)][0:1] | map(.tag_name) | @json')
+            | jq -r '[.[] | select(.prerelease == false)][0:3] | map(.tag_name) | @json')
           echo "kernel-tags=$KERNEL_TAGS" >> $GITHUB_OUTPUT
 
           # Fetch latest ZFS tags
           ZFS_TAGS=$(curl -s https://api.github.com/repos/openzfs/zfs/releases \
-            | jq -r '[.[] | select(.prerelease == false)][0:1] | map(.tag_name) | @json')
+            | jq -r '[.[] | select(.prerelease == false)][0:3] | map(.tag_name) | @json')
           echo "zfs-tags=$ZFS_TAGS" >> $GITHUB_OUTPUT
 
   build-and-release:
@@ -60,11 +60,18 @@ jobs:
 
             echo "Creating release: $RELEASE_TAG"
             gh release create "$RELEASE_TAG" \
+              ".tmp/result/spl.ko" \
               ".tmp/result/zfs.ko" \
               --title "ZFS $ZFS_VERSION - Kernel $KERNEL_VERSION" \
               --notes "$(printf "$RELEASE_NOTE")"
           else
             echo "Release $RELEASE_TAG already exists, skipping"
           fi
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: zfs-kernel-modules-${{ matrix.kernel-tag }}-${{ matrix.zfs-tag }}
+          path: .tmp/result/
+          retention-days: 30
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

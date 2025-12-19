@@ -76,4 +76,5 @@ ensure_repo "$KERNEL_REPO" "$KERNEL_TAG" "$ROOT_DIR/kernel"
 # Collect results
 rm -rf "$ROOT_DIR/result"
 mkdir "$ROOT_DIR/result"
+cp "$ROOT_DIR/zfs/module/spl.ko" "$ROOT_DIR/result/"
 cp "$ROOT_DIR/zfs/module/zfs.ko" "$ROOT_DIR/result/"

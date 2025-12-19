@@ -13,8 +13,8 @@ Originally made for [NixOS-WSL](https://github.com/nix-community/NixOS-WSL), but
 
 ## Installation
 
-1. Download `zfs.ko` from the [Releases](https://github.com/omasakun/wsl-zfs-module/releases) page.
-2. `insmod zfs.ko` to load the module.
+1. Download `spl.ko` and `zfs.ko` from the [Releases](https://github.com/omasakun/wsl-zfs-module/releases) page.
+2. `insmod spl.ko zfs.ko` to load the module.
 3. `zfs --version` to verify the installation. (You may need to install ZFS userland tools separately)
 
 Make sure to download the version that matches your WSL2 kernel version (`uname -r`).
@@ -27,13 +27,15 @@ Make sure to download the version that matches your WSL2 kernel version (`uname 
 # Get the current kernel and latest ZFS tags
 KERNEL_TAG="kernel-$(uname -r | cut -d '-' -f1)"
 ZFS_TAG="$(curl -s https://api.github.com/repos/openzfs/zfs/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)"
+RELEASE_URL="https://github.com/omasakun/wsl-zfs-module/releases/download/$ZFS_TAG-$KERNEL_TAG"
 
 # Download the kernel module
-curl -L https://github.com/omasakun/wsl-zfs-module/releases/download/$ZFS_TAG-$KERNEL_TAG/zfs.ko -o zfs.ko
+curl -L "$RELEASE_URL/spl.ko" -o spl.ko
+curl -L "$RELEASE_URL/zfs.ko" -o zfs.ko
 
 # Load the module and verify
 nix shell nixpkgs#kmod nixpkgs#zfs
-sudo insmod zfs.ko
+sudo insmod spl.ko zfs.ko
 sudo zfs --version
 ```
 
