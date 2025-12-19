@@ -32,6 +32,7 @@ jobs:
       matrix:
         kernel-tag: ${{ fromJson(needs.get-tags.outputs.kernel-tags) }}
         zfs-tag: ${{ fromJson(needs.get-tags.outputs.zfs-tags) }}
+      fail-fast: false
     permissions:
       contents: write
     steps:
@@ -67,11 +68,12 @@ jobs:
           else
             echo "Release $RELEASE_TAG already exists, skipping"
           fi
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: zfs-kernel-modules-${{ matrix.kernel-tag }}-${{ matrix.zfs-tag }}
-          path: .tmp/result/
-          retention-days: 30
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        if: always()  # Run even if the previous step fails
+        with:
+          name: zfs-kernel-modules-${{ matrix.zfs-tag }}-${{ matrix.kernel-tag }}
+          path: .tmp/result/
