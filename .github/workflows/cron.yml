@@ -59,10 +59,12 @@ jobs:
             echo "Building ZFS module for $RELEASE_TAG"
             nix develop --ignore-environment --command bash build.sh "$KERNEL_TAG" "$ZFS_TAG"
 
+            echo "Creating tar.gz archive"
+            tar -czf ".tmp/zfs-modules.tar.gz" -C ".tmp/result" spl.ko zfs.ko
+
             echo "Creating release: $RELEASE_TAG"
             gh release create "$RELEASE_TAG" \
-              ".tmp/result/spl.ko" \
-              ".tmp/result/zfs.ko" \
+              ".tmp/zfs-modules.tar.gz" \
               --title "ZFS $ZFS_VERSION - Kernel $KERNEL_VERSION" \
               --notes "$(printf "$RELEASE_NOTE")"
           else
@@ -75,5 +77,5 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()  # Run even if the previous step fails
         with:
-          name: zfs-kernel-modules-${{ matrix.zfs-tag }}-${{ matrix.kernel-tag }}
+          name: zfs-modules-${{ matrix.zfs-tag }}-${{ matrix.kernel-tag }}
           path: .tmp/result/
